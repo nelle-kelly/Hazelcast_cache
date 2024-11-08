@@ -14,7 +14,7 @@ Nous allons principalement utiliser la structure Map
 Ce code fait l'insertion des données dans la base et specifit à chaque fois l'objet ajouté.
 <img scr="capture/image1.png"> 
 <br>
-<h6> nous allons Récupérer la liste des objets insérés et manipuler le comportement du cache de Django lors de l'exécution du queryset Person.objects(). </h6> 
+<h3> nous allons Récupérer la liste des objets insérés et manipuler le comportement du cache de Django lors de l'exécution du queryset Person.objects(). </h3> 
 
  <br>
  Alors Django propose le QuerySet caching. Cependant le systeme de cache des Queryset n'est pas activé par defaut dans Django et il n'existe pas de méthode native directement disponible. <br>
@@ -25,9 +25,9 @@ Ce code fait l'insertion des données dans la base et specifit à chaque fois l'
  <img src="capture/image3.png">
  le parametre LOCATION specifie l'adresse où se trouve le server de cache auquel notre application Django va se connecter pour stocker et récupérer des données en cache.
  <br>
-Nous allons stocker les elements dans le cache de Django lors de l'execution du queryset Person.objec()
+Nous allons stocker les elements dans le cache de Django lors de l'execution du queryset Person.objec()<br>
 <img src="capture/image4.png">
 
-Les codes qui suivents permettent de recupérer la liste des objets à partir du cache et cacher des élements dans le cache Hazelcast:
+Les codes qui suivents permettent de recupérer la liste des objets à partir du cache et cacher des élements dans le cache Hazelcast: <br>
 <img src="capture/image5.png">
  
