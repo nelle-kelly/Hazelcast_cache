@@ -68,7 +68,7 @@ def put_persons_cache_Hazelcast():
     #cached_persons = [person_map.get(person.id) for person in persons]
     print("\nPersonnes récupérées du cache Hazelcast:")
     for person in persons:
-        cached_person = cache.get(f"person_{person.id}")
+        cached_person = person_map.get(person.id) 
         print(cached_person)  
 
 if __name__ == "__main__":
