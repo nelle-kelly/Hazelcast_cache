@@ -11,5 +11,11 @@ def queryset_func(data_structure_name,model_class):
     return hazalcast_element
 
 
-def get_persons(request):
-    return JsonResponse({"persons": queryset_func("persons",Person)})
+def get_persons(request,data_structure_name, model_class):
+
+    #data_structure_name = model_class.lower()
+    objects = queryset_func(data_structure_name, model_class)
+    return JsonResponse({data_structure_name: objects})
+
+def update_object(data_structure_name, model_class, object_id, updates):
+    pass
