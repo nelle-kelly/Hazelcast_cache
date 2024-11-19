@@ -1,5 +1,6 @@
 from hazelcast_cache.utils import get_hazelcast_client
 from person.models import Person
+from hazelcast_cache.helpers import HazelCastCache
 import os
 import django
 from django.core.cache import cache
@@ -7,8 +8,9 @@ from django.core.cache import cache
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hazelcast_demo.core.settings")
 django.setup()
 
-client = get_hazelcast_client()
-person_map = client.get_map("person_cache").blocking()
+#client = get_hazelcast_client()
+#person_map = client.get_map("person_cache").blocking()
+hazelcast_cache = HazelCastCache(location=None, params={})
 
 def persons_data():
     people_data = [
@@ -55,16 +57,19 @@ def getPerson_cache():
 def put_persons_cache_Hazelcast():
 
     persons = cache.get('persons')
+    if not persons:
+        print("Aucune personne trouvée dans le cache Django.")
+        return
 
     for person in persons:
-        person_map.put(person.id, {
+        hazelcast_cache.set("person_cache", "map", person.id, {
             "first_name": person.first_name,
             "last_name": person.last_name,
             "phone": person.phone,
             "email": person.email
         })
     
-        person_map.put(person.last_name, {
+        hazelcast_cache.set("person_cache", "map",person.last_name, {
             "first_name": person.first_name,
             "last_name": person.last_name,
             "phone": person.phone,
@@ -73,16 +78,28 @@ def put_persons_cache_Hazelcast():
     
     print("\nPersonnes récupérées du cache Hazelcast:")
     for person in persons:
-        cached_person = person_map.get(person.id) 
+        cached_person =  hazelcast_cache.get("person_cache", "map",person.id) 
         print(cached_person)  
 
 def get_one_person(first_name):
-    cached_person = person_map.get(first_name)
+    cached_person = hazelcast_cache.get("person_cache", "map", first_name)
     if cached_person is not None:
         print(f"Personne trouvée dans le cache Hazelcast avec ID {first_name}:")
         print(cached_person)
     else:
         print(f"Aucune personne trouvée dans le cache Hazelcast avec ID {first_name}.")
+
+
+def update_person_cache(person_id, updated_field, new_value):
+    # Met à jour un champ spécifique d'une personne dans le cache Hazelcast
+    cached_person = hazelcast_cache.get("person_cache", "map", person_id)
+    if cached_person is not None:
+        cached_person[updated_field] = new_value
+        hazelcast_cache.set("person_cache", "map", person_id, cached_person)
+        print(f"Personne mise à jour dans le cache Hazelcast : {cached_person}")
+    else:
+        print(f"Aucune personne trouvée dans le cache Hazelcast avec ID {person_id}.")
+
 
 if __name__ == "__main__":
     persons_data()
