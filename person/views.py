@@ -3,9 +3,13 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from person.models import Person
 
+def queryset_func(data_structure_name,model_class):
+    hazalcast_element = cache.get(data_structure_name)
+    if not hazalcast_element:
+        hazalcast_element = list(model_class.objects.values())
+        cache.set(data_structure_name, hazalcast_element)
+    return hazalcast_element
+
+
 def get_persons(request):
-    persons = cache.get("persons")
-    if not persons:
-        persons = list(Person.objects.values())
-        cache.set("persons", persons)
-    return JsonResponse({"persons": persons})
+    return JsonResponse({"persons": queryset_func("persons",Person)})

@@ -64,15 +64,30 @@ def put_persons_cache_Hazelcast():
             "email": person.email
         })
     
-    # Récupère et affiche les objets depuis le cache Hazelcast
-    #cached_persons = [person_map.get(person.id) for person in persons]
+        person_map.put(person.last_name, {
+            "first_name": person.first_name,
+            "last_name": person.last_name,
+            "phone": person.phone,
+            "email": person.email
+        })
+    
     print("\nPersonnes récupérées du cache Hazelcast:")
     for person in persons:
         cached_person = person_map.get(person.id) 
         print(cached_person)  
+
+def get_one_person(first_name):
+    cached_person = person_map.get(first_name)
+    if cached_person is not None:
+        print(f"Personne trouvée dans le cache Hazelcast avec ID {first_name}:")
+        print(cached_person)
+    else:
+        print(f"Aucune personne trouvée dans le cache Hazelcast avec ID {first_name}.")
 
 if __name__ == "__main__":
     persons_data()
     getData_persons()
     getPerson_cache()
     put_persons_cache_Hazelcast()
+    get_one_person()
+    
