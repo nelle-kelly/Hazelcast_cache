@@ -54,22 +54,22 @@ def getPerson_cache():
             "email": person.email
         })
 
-def put_persons_cache_Hazelcast():
+def put_persons_cache_Hazelcast(structure_name, structure_type):
 
-    persons = cache.get('persons')
+    persons = cache.get("map", '1')
     if not persons:
         print("Aucune personne trouvée dans le cache Django.")
         return
 
     for person in persons:
-        hazelcast_cache.set("person_cache", "map", person.id, {
+        hazelcast_cache.set(structure_name, structure_type, person.id, {
             "first_name": person.first_name,
             "last_name": person.last_name,
             "phone": person.phone,
             "email": person.email
         })
     
-        hazelcast_cache.set("person_cache", "map",person.last_name, {
+        hazelcast_cache.set("person", "map",person.last_name, {
             "first_name": person.first_name,
             "last_name": person.last_name,
             "phone": person.phone,
@@ -78,11 +78,11 @@ def put_persons_cache_Hazelcast():
     
     print("\nPersonnes récupérées du cache Hazelcast:")
     for person in persons:
-        cached_person =  hazelcast_cache.get("person_cache", "map",person.id) 
+        cached_person =  hazelcast_cache.get("person", "map",person.id) 
         print(cached_person)  
 
 def get_one_person(first_name):
-    cached_person = hazelcast_cache.get("person_cache", "map", first_name)
+    cached_person = hazelcast_cache.get("person", "map", first_name)
     if cached_person is not None:
         print(f"Personne trouvée dans le cache Hazelcast avec ID {first_name}:")
         print(cached_person)
