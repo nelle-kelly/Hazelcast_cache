@@ -6,7 +6,6 @@ import hazelcast
 #from core.settings import HAZELCAST_CONFIG
 
 
-client = get_hazelcast_client()
 #person_map = client.get_map("person_cache").blocking()
 
 
@@ -14,6 +13,7 @@ client = get_hazelcast_client()
 class HazelCastCache(BaseCache):
     def __init__(self, location, params):
         
+        self.client = get_hazelcast_client()
         super().__init__(params)
         self.structures = {}  # Cache local pour les différentes structures Hazelcast
 
@@ -21,11 +21,11 @@ class HazelCastCache(BaseCache):
         
         if structure_name not in self.structures:
             if structure_type == "map":
-                self.structures[structure_name] = client.get_map(structure_name).blocking()
+                self.structures[structure_name] = self.client.get_map(structure_name).blocking()
             elif structure_type == "set":
-                self.structures[structure_name] = client.get_set(structure_name).blocking()
+                self.structures[structure_name] = self.client.get_set(structure_name).blocking()
             elif structure_type == "queue":
-                self.structures[structure_name] = client.get_queue(structure_name).blocking()
+                self.structures[structure_name] = self.client.get_queue(structure_name).blocking()
             else:
                 raise ValueError(f"Type de structure Hazelcast inconnu : {structure_type}")
         return self.structures[structure_name]
@@ -46,6 +46,7 @@ class HazelCastCache(BaseCache):
         if structure_type == "map":
             return structure.get(key) or default
         elif structure_type == "set":
+            
             return key in structure  # Vérifie si l'élément est présent dans le set
         else:
             raise ValueError(f"Opération non supportée pour le type : {structure_type}")
